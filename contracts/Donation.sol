@@ -127,10 +127,12 @@ contract Donation is Ownable {
         }
     }
 
-    function setFeeRateForNative(
-        uint256 _feePercentage
-    ) external onlyOwner {
-        nativeFeePercentage = _feePercentage;
+    function setFeeRateForNative(uint256 newFeePercentage) external onlyOwner {
+        require(
+            newFeePercentage >= 0 && newFeePercentage <= 10,
+            "The service fee cannot be less than zero or exceed 10%"
+        );
+        nativeFeePercentage = newFeePercentage;
     }
 
     function setFeeRateForToken(
@@ -140,6 +142,10 @@ contract Donation is Ownable {
         require(
             tokens[symbol].token != IERC20(address(0)),
             "Token not registered"
+        );
+        require(
+            newFeePercentage >= 0 && newFeePercentage <= 10,
+            "The service fee cannot be less than zero or exceed 10%"
         );
         tokens[symbol].feePercentage = newFeePercentage;
     }
