@@ -5,8 +5,6 @@ import "@nomicfoundation/hardhat-verify";
 import { donationAbi } from "./donationAbi"
 
 const ETHERSCAN_API_KEY = vars.get("ETHERSCAN_API_KEY");
-const ANKR_RPC_BSC_MAINNET_API_KEY = vars.get("ANKR_RPC_BSC_MAINNET_API_KEY");
-const ANKR_RPC_BSC_TESTNET_API_KEY = vars.get("ANKR_RPC_BSC_TESTNET_API_KEY");
 
 task("add-token", "Adds new allowed token to donation contract")
 .addParam("contract", "Token contract address")
