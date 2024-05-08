@@ -7,8 +7,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 contract Donation is Ownable {
     struct TokenInfo {
         IERC20 token;
+        uint256 decimals;
         uint256 feePercentage;
     }
+
+    uint256 public constant MAX_FEE_PERCENTAGE = 10;
 
     mapping(string => TokenInfo) public tokens;
     uint256 public nativeFeePercentage = 0;
@@ -28,6 +31,7 @@ contract Donation is Ownable {
 
     function addToken(
         string memory symbol,
+        uint256 decimals,
         address tokenAddress,
         uint256 feePercentage
     ) external onlyOwner {
@@ -35,12 +39,23 @@ contract Donation is Ownable {
             tokenAddress != address(0),
             "Token address cannot be the zero address"
         );
-        tokens[symbol] = TokenInfo(IERC20(tokenAddress), feePercentage);
+        require(
+            feePercentage >= 0 && feePercentage <= MAX_FEE_PERCENTAGE,
+            "The service fee cannot be less than zero or exceed 10%"
+        );
+        tokens[symbol] = TokenInfo(
+            IERC20(tokenAddress),
+            decimals,
+            feePercentage
+        );
     }
 
-    function deleteToken(string memory symbol) external onlyOwner {
+    function deleteToken(
+        string memory symbol
+    ) external onlyOwner {
+        TokenInfo storage token = tokens[symbol];
         require(
-            tokens[symbol].token != IERC20(address(0)),
+            token.token != IERC20(address(0)),
             "Token not registered"
         );
         delete tokens[symbol];
@@ -48,7 +63,7 @@ contract Donation is Ownable {
 
     function donate(
         uint256 storyId,
-        string memory tokenSymbol,
+        string memory symbol,
         address receiver,
         uint256 amount,
         uint256 tips
@@ -56,45 +71,37 @@ contract Donation is Ownable {
         require(amount > 0, "Donation amount must be positive");
         require(receiver != address(0), "Receiver cannot be the zero address");
 
+        uint256 amountToReceiver = 0;
+        uint256 serviveFee = 0;
+
         // Donation using the native blockchain currency (ETH/BNB)
-        if (keccak256(bytes(tokenSymbol)) == keccak256(bytes("NATIVE"))) {
+        if (keccak256(bytes(symbol)) == keccak256(bytes("NATIVE"))) {
             uint256 totalTransactionAmount = amount + tips;
             require(
                 msg.value == totalTransactionAmount,
                 "NATIVE value sent does not match the specified amount"
             );
 
-            uint256 fee = (amount * nativeFeePercentage) / 100;
-            uint256 totalDeductions = fee + tips;
+            serviveFee = (amount * nativeFeePercentage) / 100;
+            uint256 totalDeductions = serviveFee + tips;
             require(
                 amount > totalDeductions,
                 "Total transaction amount is too low after including tips"
             );
 
-            uint256 amountToReceiver = amount - fee;
+            amountToReceiver = amount - serviveFee;
             (bool sent, ) = receiver.call{value: amountToReceiver}("");
             require(sent, "Failed to send NATIVE");
-
-            emit DonationMade(
-                storyId,
-                receiver,
-                msg.sender,
-                "NATIVE",
-                amount,
-                amountToReceiver,
-                fee,
-                tips
-            );
         } else {
             // ERC20 token donation
-            TokenInfo storage token = tokens[tokenSymbol];
+            TokenInfo storage token = tokens[symbol];
             require(token.token != IERC20(address(0)), "Token not registered");
 
-            uint256 fee = (amount * token.feePercentage) / 100;
-            uint256 totalDeductions = fee + tips;
+            serviveFee = (amount * token.feePercentage) / 100;
+            uint256 totalDeductions = serviveFee + tips;
             require(amount > totalDeductions, "Donation amount is too low");
 
-            uint256 amountToReceiver = amount - fee;
+            amountToReceiver = amount - serviveFee;
 
             // Trensfer tokens
             require(
@@ -113,23 +120,24 @@ contract Donation is Ownable {
                 ),
                 "Failed to transfer amount to receiver"
             );
-
-            emit DonationMade(
-                storyId,
-                receiver,
-                msg.sender,
-                tokenSymbol,
-                amount,
-                amountToReceiver,
-                fee,
-                tips
-            );
         }
+
+        // Send donation made event
+        emit DonationMade(
+            storyId,
+            receiver,
+            msg.sender,
+            symbol,
+            amount,
+            amountToReceiver,
+            serviveFee,
+            tips
+        );
     }
 
     function setFeeRateForNative(uint256 newFeePercentage) external onlyOwner {
         require(
-            newFeePercentage >= 0 && newFeePercentage <= 10,
+            newFeePercentage >= 0 && newFeePercentage <= MAX_FEE_PERCENTAGE,
             "The service fee cannot be less than zero or exceed 10%"
         );
         nativeFeePercentage = newFeePercentage;
@@ -139,12 +147,13 @@ contract Donation is Ownable {
         string memory symbol,
         uint256 newFeePercentage
     ) external onlyOwner {
+        TokenInfo storage token = tokens[symbol];
         require(
-            tokens[symbol].token != IERC20(address(0)),
+            token.token != IERC20(address(0)),
             "Token not registered"
         );
         require(
-            newFeePercentage >= 0 && newFeePercentage <= 10,
+            newFeePercentage >= 0 && newFeePercentage <= MAX_FEE_PERCENTAGE,
             "The service fee cannot be less than zero or exceed 10%"
         );
         tokens[symbol].feePercentage = newFeePercentage;
@@ -160,12 +169,11 @@ contract Donation is Ownable {
     }
 
     function withdrawToken(
-        string memory tokenSymbol,
+        string memory symbol,
         address to,
         uint256 amount
     ) external onlyOwner {
-        TokenInfo storage token = tokens[tokenSymbol];
-        require(token.token != IERC20(address(0)), "Token not registered");
+        TokenInfo storage token = tokens[symbol];
         require(
             token.token.balanceOf(address(this)) >= amount,
             "Insufficient token balance"

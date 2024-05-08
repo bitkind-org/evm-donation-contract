@@ -1,2 +1,5 @@
-# bitkind-donations-contract
-Smart contract for the BitKind dApp enables donations in BTK and native tokens on BSC/ETH network to support users' stories.
+# Bitkind contracts
+
+1. npx hardhat vars set ETHERSCAN_API_KEY
+2. npx hardhat vars set ANKR_RPC_BSC_MAINNET_API_KEY
+3. npx hardhat vars set ANKR_RPC_BSC_TESTNET_API_KEY
