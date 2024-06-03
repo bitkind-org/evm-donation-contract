@@ -8,7 +8,6 @@ contract Donation is Ownable {
     struct TokenInfo {
         IERC20 token;
         uint256 decimals;
-        uint256 feePercentage;
     }
 
     uint256 public constant MAX_FEE_PERCENTAGE = 10;
@@ -22,8 +21,6 @@ contract Donation is Ownable {
         address indexed sender,
         string tokenSymbol,
         uint256 grossAmount,
-        uint256 netAmount,
-        uint256 serviceFee,
         uint256 serviceTips
     );
 
@@ -45,8 +42,7 @@ contract Donation is Ownable {
         );
         tokens[symbol] = TokenInfo(
             IERC20(tokenAddress),
-            decimals,
-            feePercentage
+            decimals
         );
     }
 
@@ -71,52 +67,41 @@ contract Donation is Ownable {
         require(amount > 0, "Donation amount must be positive");
         require(receiver != address(0), "Receiver cannot be the zero address");
 
-        uint256 amountToReceiver = 0;
-        uint256 serviveFee = 0;
-
         // Donation using the native blockchain currency (ETH/BNB)
         if (keccak256(bytes(symbol)) == keccak256(bytes("NATIVE"))) {
-            uint256 totalTransactionAmount = amount + tips;
+            uint256 totalDue = amount + tips;
             require(
-                msg.value == totalTransactionAmount,
+                msg.value == totalDue,
                 "NATIVE value sent does not match the specified amount"
             );
 
-            serviveFee = (amount * nativeFeePercentage) / 100;
-            uint256 totalDeductions = serviveFee + tips;
             require(
-                amount > totalDeductions,
+                amount > tips,
                 "Total transaction amount is too low after including tips"
             );
 
-            amountToReceiver = amount - serviveFee;
-            (bool sent, ) = receiver.call{value: amountToReceiver}("");
-            require(sent, "Failed to send NATIVE");
+            (bool sent, ) = receiver.call{value: amount}("");
+            require(sent, "Failed to send native token");
         } else {
             // ERC20 token donation
             TokenInfo storage token = tokens[symbol];
             require(token.token != IERC20(address(0)), "Token not registered");
-
-            serviveFee = (amount * token.feePercentage) / 100;
-            uint256 totalDeductions = serviveFee + tips;
-            require(amount > totalDeductions, "Donation amount is too low");
-
-            amountToReceiver = amount - serviveFee;
+            require(amount > tips, "Donation amount is too low");
 
             // Trensfer tokens
             require(
                 token.token.transferFrom(
                     msg.sender,
                     address(this),
-                    totalDeductions
+                    tips
                 ),
-                "Failed to transfer fees and tips"
+                "Failed to transfer tips"
             );
             require(
                 token.token.transferFrom(
                     msg.sender,
                     receiver,
-                    amountToReceiver
+                    amount
                 ),
                 "Failed to transfer amount to receiver"
             );
@@ -129,34 +114,8 @@ contract Donation is Ownable {
             msg.sender,
             symbol,
             amount,
-            amountToReceiver,
-            serviveFee,
             tips
         );
-    }
-
-    function setFeeRateForNative(uint256 newFeePercentage) external onlyOwner {
-        require(
-            newFeePercentage >= 0 && newFeePercentage <= MAX_FEE_PERCENTAGE,
-            "The service fee cannot be less than zero or exceed 10%"
-        );
-        nativeFeePercentage = newFeePercentage;
-    }
-
-    function setFeeRateForToken(
-        string memory symbol,
-        uint256 newFeePercentage
-    ) external onlyOwner {
-        TokenInfo storage token = tokens[symbol];
-        require(
-            token.token != IERC20(address(0)),
-            "Token not registered"
-        );
-        require(
-            newFeePercentage >= 0 && newFeePercentage <= MAX_FEE_PERCENTAGE,
-            "The service fee cannot be less than zero or exceed 10%"
-        );
-        tokens[symbol].feePercentage = newFeePercentage;
     }
 
     function withdrawNativeToken(

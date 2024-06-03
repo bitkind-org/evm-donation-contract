@@ -49,18 +49,18 @@ const config: HardhatUserConfig = {
   solidity: "0.8.24",
   defaultNetwork: "localnet",
   networks: {
-    mainnet: {
-      url: "https://bsc-dataseed1.binance.org/",
-      chainId: 56,
-      gasPrice: "auto",
-      accounts: [process.env.DEPLOYER_ACCOUNT_KEY || ""]
-    },
-    testnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      chainId: 97,
-      gasPrice: "auto",
-      accounts: [process.env.DEPLOYER_ACCOUNT_KEY || ""]
-    },
+    // mainnet: {
+    //   url: "https://bsc-dataseed1.binance.org/",
+    //   chainId: 56,
+    //   gasPrice: "auto",
+    //   accounts: [process.env.DEPLOYER_ACCOUNT_KEY || ""]
+    // },
+    // testnet: {
+    //   url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+    //   chainId: 97,
+    //   gasPrice: "auto",
+    //   accounts: [process.env.DEPLOYER_ACCOUNT_KEY || ""]
+    // },
     localnet: {
       chainId: 31337,
       url: "http://192.168.50.43:8545"
