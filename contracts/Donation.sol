@@ -104,6 +104,7 @@ contract Donation is Ownable {
         uint256 amount
     ) external onlyOwner {
         TokenInfo storage token = tokens[symbol];
+        require(token.token != IERC20(address(0)), "Token not registered");
         require(
             token.token.balanceOf(address(this)) >= amount,
             "Insufficient token balance"
