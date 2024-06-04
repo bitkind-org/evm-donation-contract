@@ -10,9 +10,8 @@ task("add-token", "Adds new allowed token to donation contract")
 .addParam("contract", "Token contract address")
   .addParam("symbol", "Token symbol")
   .addParam("decimals", "Token decimals")
-  .addParam("fee", "Percent of service fee")
   .addParam("address", "Address of donation smart contract")
-  .setAction(async ({ address, decimals, symbol, contract, fee }, hre) => {
+  .setAction(async ({ address, decimals, symbol, contract }, hre) => {
     const walletClient = await hre.viem.getWalletClient("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
     const publicClient = await hre.viem.getPublicClient()
 
@@ -22,7 +21,7 @@ task("add-token", "Adds new allowed token to donation contract")
       abi: donationAbi,
       account: walletClient.account,
       functionName: 'addToken',
-      args: [symbol, decimals, contract, BigInt(fee)],
+      args: [symbol, decimals, contract],
     })
     await walletClient.writeContract(request)
   });

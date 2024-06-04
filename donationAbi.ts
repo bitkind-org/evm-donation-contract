@@ -62,18 +62,6 @@ export const donationAbi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "netAmount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "serviceFee",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
         name: "serviceTips",
         type: "uint256",
       },
@@ -130,11 +118,6 @@ export const donationAbi = [
         name: "tokenAddress",
         type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "feePercentage",
-        type: "uint256",
-      },
     ],
     name: "addToken",
     outputs: [],
@@ -189,19 +172,6 @@ export const donationAbi = [
   },
   {
     inputs: [],
-    name: "nativeFeePercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -216,37 +186,6 @@ export const donationAbi = [
   {
     inputs: [],
     name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "newFeePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "setFeeRateForNative",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "newFeePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "setFeeRateForToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -269,11 +208,6 @@ export const donationAbi = [
       {
         internalType: "uint256",
         name: "decimals",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "feePercentage",
         type: "uint256",
       },
     ],
