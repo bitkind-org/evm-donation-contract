@@ -13,7 +13,6 @@ contract Donation is Ownable {
     uint256 public constant MAX_FEE_PERCENTAGE = 10;
 
     mapping(string => TokenInfo) public tokens;
-    uint256 public nativeFeePercentage = 0;
 
     event DonationMade(
         uint256 indexed storyId,
@@ -29,31 +28,18 @@ contract Donation is Ownable {
     function addToken(
         string memory symbol,
         uint256 decimals,
-        address tokenAddress,
-        uint256 feePercentage
+        address tokenAddress
     ) external onlyOwner {
         require(
             tokenAddress != address(0),
             "Token address cannot be the zero address"
         );
-        require(
-            feePercentage >= 0 && feePercentage <= MAX_FEE_PERCENTAGE,
-            "The service fee cannot be less than zero or exceed 10%"
-        );
-        tokens[symbol] = TokenInfo(
-            IERC20(tokenAddress),
-            decimals
-        );
+        tokens[symbol] = TokenInfo(IERC20(tokenAddress), decimals);
     }
 
-    function deleteToken(
-        string memory symbol
-    ) external onlyOwner {
+    function deleteToken(string memory symbol) external onlyOwner {
         TokenInfo storage token = tokens[symbol];
-        require(
-            token.token != IERC20(address(0)),
-            "Token not registered"
-        );
+        require(token.token != IERC20(address(0)), "Token not registered");
         delete tokens[symbol];
     }
 
@@ -90,32 +76,17 @@ contract Donation is Ownable {
 
             // Trensfer tokens
             require(
-                token.token.transferFrom(
-                    msg.sender,
-                    address(this),
-                    tips
-                ),
+                token.token.transferFrom(msg.sender, address(this), tips),
                 "Failed to transfer tips"
             );
             require(
-                token.token.transferFrom(
-                    msg.sender,
-                    receiver,
-                    amount
-                ),
+                token.token.transferFrom(msg.sender, receiver, amount),
                 "Failed to transfer amount to receiver"
             );
         }
 
         // Send donation made event
-        emit DonationMade(
-            storyId,
-            receiver,
-            msg.sender,
-            symbol,
-            amount,
-            tips
-        );
+        emit DonationMade(storyId, receiver, msg.sender, symbol, amount, tips);
     }
 
     function withdrawNativeToken(
