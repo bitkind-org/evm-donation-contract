@@ -10,8 +10,6 @@ contract Donation is Ownable {
         uint256 decimals;
     }
 
-    uint256 public constant MAX_FEE_PERCENTAGE = 10;
-
     mapping(string => TokenInfo) public tokens;
 
     event DonationMade(
