@@ -16,6 +16,9 @@ After donation smart contract was deployed, save its address to run hardhat task
 
 Run `npx hardhat vars set DONATION_CONTRACT_ADDRESS`
 
+### Verify contract
+Run `npx hardhat ignition verify --network {NETWORK} chain-{CHAIN_ID}`
+
 ## Tasks
 
 ### Add token
