@@ -37,3 +37,9 @@ Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} with
 A special method that provides the ability to transfer tips left by users in ERC20 token to a specified address. Specify the amount ​​in WEI, this function doesn't automatically formatting of amount.
 
 Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} withdraw-token --to {RECEIVER_ADDRESS} --amount {AMOUNT_WEI} --symbol {TOKEN_SYMBOL}`
+
+## Development
+* Run node `npx hardhat node --hostname 192.168.50.43`
+* Deploy ERC20 token `npx hardhat ignition deploy ignition/modules/Token.ts --network localnet`
+* Deploy donation contract `npx hardhat ignition deploy ignition/modules/Donation.ts --network localnet`
+* Register token on donation contract `npx hardhat --network localnet add-token --contract 0x5FbDB2315678afecb367f032d93F642f64180aa3 --symbol BTK --decimals 18`
