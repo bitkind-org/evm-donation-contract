@@ -1,7 +1,7 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 const TokenModule = buildModule("Token", (m) => {
-  const token = m.contract("Token", [21000000000000000000000000n]);
+  const token = m.contract("Token", ["Bitkind", "BTK", BigInt(999_000_000) * BigInt(10 ** 18)]);
   return { token };
 });
 

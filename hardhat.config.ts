@@ -102,7 +102,7 @@ const config: HardhatUserConfig = {
     // },
     localnet: {
       chainId: 31337,
-      url: "http://192.168.50.43:8545"
+      url: "http://localhost:8545"
     }
   },
   etherscan: {
