@@ -1,9 +1,9 @@
-# Bitkind contracts
-This repository contains smart contracts for processing payments on BitKind.org.
+# Bitkind EVM contracts
+Smart contracts for processing donations in various tokens on Bitkind.org in EVM compatible networks.
 
-Currently, it includes:
-1. Donation contract
-2. BTK ERC20 token contract
+When you make a transaction or connect your wallet, verify the contract address and check that the site domain is https://bitkind.org.
+
+* BNB Chain:  [**0x7C570E77518F02eBEcAFAC8Ace0eA263abCB44bd**](https://bscscan.com/address/0x7c570e77518f02ebecafac8ace0ea263abcb44bd)
 
 ## Setup environment
 1. Set etherscan API key to verify contract later `npx hardhat vars set ETHERSCAN_API_KEY`
@@ -42,7 +42,7 @@ A special method that provides the ability to transfer tips left by users in ERC
 Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} withdraw-token --to {RECEIVER_ADDRESS} --amount {AMOUNT_WEI} --symbol {TOKEN_SYMBOL}`
 
 ## Development
-* Run node `npx hardhat node --hostname 192.168.50.43`
+* Run node `npx hardhat node --hostname 127.0.0.1`
 * Deploy ERC20 token `npx hardhat ignition deploy ignition/modules/Token.ts --network localnet`
 * Deploy donation contract `npx hardhat ignition deploy ignition/modules/Donation.ts --network localnet`
 * Register token on donation contract `npx hardhat --network localnet add-token --contract 0x5FbDB2315678afecb367f032d93F642f64180aa3 --symbol BTK --decimals 18`
