@@ -1,48 +1,139 @@
-# Bitkind EVM contracts
-Smart contracts for processing donations in various tokens on Bitkind.org in EVM compatible networks.
+# Bitkind EVM Contracts
+Smart contract for processing donations in various tokens on [Bitkind.org](https://bitkind.org) in EVM-compatible networks.
 
-When you make a transaction or connect your wallet, verify the contract address and check that the site domain is https://bitkind.org.
+When you make a transaction, please verify:
+1. The **contract address** you are interacting with.
+2. That the **site domain** is indeed `https://bitkind.org`.
 
-* BNB Chain:  [**0x7C570E77518F02eBEcAFAC8Ace0eA263abCB44bd**](https://bscscan.com/address/0x7c570e77518f02ebecafac8ace0ea263abcb44bd)
+### Deployed Contract(s)
 
-## Setup environment
-1. Set etherscan API key to verify contract later `npx hardhat vars set ETHERSCAN_API_KEY`
-2. Set address of the deployer wallet `npx hardhat vars set DEPLOYER_WALLET_ADDRESS`
+- **BNB Chain (BSC)**: [0x60DaF666f75329b740cDd16D2E71f9F04C97f67b](https://bscscan.com/address/0x60DaF666f75329b740cDd16D2E71f9F04C97f67b)
+- **Ethereum Mainnet**: [0x7c570e77518f02ebecafac8ace0ea263abcb44bd](https://etherscan.com/address/0x7c570e77518f02ebecafac8ace0ea263abcb44bd)
 
-## Deploy donation contract
-Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat ignition deploy ignition/modules/Donation.ts --network {NETWORK}`
+## Deploy Donation Contract
+To deploy the **donation contract**, run:
 
-After donation smart contract was deployed, save its address to run hardhat tasks:
+```bash
+DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+npx hardhat ignition deploy ignition/modules/Donation.ts --network {NETWORK}
+```
 
-Run `npx hardhat vars set DONATION_CONTRACT_ADDRESS`
+After the donation smart contract is deployed, save its address to run Hardhat tasks. For example:
 
-### Verify contract
-Run `npx hardhat ignition verify --network {NETWORK} chain-{CHAIN_ID}`
+```bash
+npx hardhat vars set DONATION_CONTRACT_ADDRESS {CONTRACT_ADDRESS}
+```
+
+### Verify Contract
+1. Set Etherscan API key:
+   ```bash
+   npx hardhat vars set ETHERSCAN_API_KEY
+   ```
+2. Run the verify script:
+   ```bash
+   DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+   npx hardhat ignition verify --network {NETWORK} chain-{CHAIN_ID}
+   ```
 
 ## Tasks
+Below are the custom Hardhat tasks for token management and withdrawals.
 
-### Add token
+---
+
+### Add Token
 This method adds new token to the allowed tokens list, after this users will be able to make donations in this token.
 
-Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} add-token --contract {TOKEN_CONTRACT_ADDR} --symbol {TOKEN_SYMBOL} --decimals 18`
+Adds a new token to the allowed tokens list. After that, users can donate in this token.
 
-### Delete token
-Use this method to delete token from the allowed list. After that all donations in this token will be rejected.
+```bash
+DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+npx hardhat --network {NETWORK} \
+  add-token \
+  --contract {TOKEN_CONTRACT_ADDR} \
+  --symbol {TOKEN_SYMBOL}
+```
 
-Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} delete-token --symbol {TOKEN_SYMBOL}`
+### Delete Token
+Removes a token from the allowed list. Any donation in this token will be rejected afterward.
 
-### Withdraw native token
-A special function that provides the ability to transfer tips left by users in Ether to a specified address. Specify the amount ​​on Ether and not on WEI, the function automatically performs formatting.
+```bash
+DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+npx hardhat --network {NETWORK} \
+  delete-token \
+  --symbol {TOKEN_SYMBOL}
+```
 
-Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} withdraw-native --to {RECEIVER_ADDRESS} --amount {AMOUNT_ETHER}`
+### Withdraw Native Token
+Transfers tips left by users in Ether to a specified address. Specify the amount in Ether (not Wei). The function automatically converts Ether to Wei internally.
 
-### Withdraw ERC20 token
-A special method that provides the ability to transfer tips left by users in ERC20 token to a specified address. Specify the amount ​​in WEI, this function doesn't automatically formatting of amount.
+```bash
+DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+npx hardhat --network {NETWORK} \
+  withdraw-native \
+  --to {RECEIVER_ADDRESS} \
+  --amount {AMOUNT_ETHER}
+```
 
-Run `DEPLOYER_ACCOUNT_KEY={YOUR_SECRET_KEY} npx hardhat --network {NETWORK} withdraw-token --to {RECEIVER_ADDRESS} --amount {AMOUNT_WEI} --symbol {TOKEN_SYMBOL}`
+### Withdraw ERC20 Token
+Transfers tips left by users in an ERC20 token to a specified address. Specify the amount in Wei. This function does not perform formatting automatically.
+
+```bash
+DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+npx hardhat --network {NETWORK} \
+  withdraw-token \
+  --to {RECEIVER_ADDRESS} \
+  --amount {AMOUNT_WEI} \
+  --symbol {TOKEN_SYMBOL}
+```
 
 ## Development
-* Run node `npx hardhat node --hostname 127.0.0.1`
-* Deploy ERC20 token `npx hardhat ignition deploy ignition/modules/Token.ts --network localnet`
-* Deploy donation contract `npx hardhat ignition deploy ignition/modules/Donation.ts --network localnet`
-* Register token on donation contract `npx hardhat --network localnet add-token --contract 0x5FbDB2315678afecb367f032d93F642f64180aa3 --symbol BTK --decimals 18`
+Below is a quick reference for local development.
+
+1. **Run a local node**  
+   ```bash
+   npx hardhat node --hostname 127.0.0.1
+   ```
+2. Deploy an ERC20 token (for testing)
+   ```bash
+   DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+   npx hardhat ignition deploy ignition/modules/Token.ts --network {NETWORK}
+   ```
+3. Deploy the donation contract
+   ```bash
+   DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+   npx hardhat ignition deploy ignition/modules/Donation.ts --network {NETWORK}
+   ```
+
+4. Register a token on the donation contract
+   ```bash
+   DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
+   npx hardhat --network {NETWORK} add-token \
+     --contract {TOKEN_ADDRESS} \
+     --symbol {TOKEN_SYMBOL}
+   ```
+
+## Testing
+Then simply run:
+
+```bash
+yarn test
+```
+
+This executes your Hardhat tests. You can also specify a network:
+
+```bash
+yarn test --network {NETWORK}
+```
+
+Be sure to have the local node running (if testing locally) before you run yarn test.
+
+### Additional Testing Notes
+To compile contracts via Yarn:
+```bash
+yarn hardhat compile
+```
+
+To run coverage (if have a coverage plugin):
+```bash
+yarn hardhat coverage
+```
