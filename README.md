@@ -8,7 +8,7 @@ When you make a transaction, please verify:
 ### Deployed Contract(s)
 
 - **BNB Chain (BSC)**: [0x60DaF666f75329b740cDd16D2E71f9F04C97f67b](https://bscscan.com/address/0x60DaF666f75329b740cDd16D2E71f9F04C97f67b)
-- **Ethereum Mainnet**: [0x7c570e77518f02ebecafac8ace0ea263abcb44bd](https://etherscan.com/address/0x7c570e77518f02ebecafac8ace0ea263abcb44bd)
+- **Ethereum Mainnet**: [0x7c570e77518f02ebecafac8ace0ea263abcb44bd](https://etherscan.io/address/0x7c570e77518f02ebecafac8ace0ea263abcb44bd)
 
 ## Deploy Donation Contract
 To deploy the **donation contract**, run:
