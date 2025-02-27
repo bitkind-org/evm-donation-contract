@@ -2,9 +2,9 @@
   "name": "bitkind-smart-contracts",
   "version": "0.0.1",
   "description": "Smart contracts for the BitKind dApp enables donations in BTK and native tokens on BSC/ETH network.",
-  "repository": "https://github.com/bitkind-org/donation-contract.git",
+  "repository": "https://github.com/bitkind-org/evm-donation-contract.git",
   "author": "andrew@bitkind.org",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomicfoundation/hardhat-ignition": "^0.15.0",
