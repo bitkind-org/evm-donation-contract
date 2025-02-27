@@ -26,6 +26,12 @@ const config: HardhatUserConfig = {
       gasPrice: 5000000008,
       accounts: [DEPLOYER_PRIVATE_KEY]
     },
+    'base-mainnet': {
+      url: "https://mainnet.base.org",
+      // chainId: 8453,
+      gasPrice: "auto",
+      accounts: [DEPLOYER_PRIVATE_KEY]
+    },
     localnet: {
       chainId: 31337,
       url: "http://127.0.0.1:8545",
