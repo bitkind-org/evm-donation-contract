@@ -9,6 +9,7 @@ When you make a transaction, please verify:
 
 - **BNB Chain (BSC)**: [0x60DaF666f75329b740cDd16D2E71f9F04C97f67b](https://bscscan.com/address/0x60DaF666f75329b740cDd16D2E71f9F04C97f67b)
 - **Ethereum Mainnet**: [0x7c570e77518f02ebecafac8ace0ea263abcb44bd](https://etherscan.io/address/0x7c570e77518f02ebecafac8ace0ea263abcb44bd)
+- **Base Mainnet**: [0x42075e64Fe7B7C158381627a5bdB04Dccb0E4F0A](https://basescan.org/address/0x42075e64Fe7B7C158381627a5bdB04Dccb0E4F0A)
 
 ## Deploy Donation Contract
 To deploy the **donation contract**, run:
@@ -41,8 +42,6 @@ Below are the custom Hardhat tasks for token management and withdrawals.
 ---
 
 ### Add Token
-This method adds new token to the allowed tokens list, after this users will be able to make donations in this token.
-
 Adds a new token to the allowed tokens list. After that, users can donate in this token.
 
 ```bash
