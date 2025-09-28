@@ -74,14 +74,14 @@ npx hardhat --network {NETWORK} \
 ```
 
 ### Withdraw ERC20 Token
-Transfers tips left by users in an ERC20 token to a specified address. Specify the amount in Wei. This function does not perform formatting automatically.
+Transfers tips left by users in an ERC20 token to a specified address. Amount is specified in token units (human-readable, e.g. `"1.5"`). The task automatically reads the token's `decimals` and converts to the smallest units.
 
 ```bash
 DEPLOYER_PRIVATE_KEY={YOUR_SECRET_KEY} \
 npx hardhat --network {NETWORK} \
   withdraw-token \
   --to {RECEIVER_ADDRESS} \
-  --amount {AMOUNT_WEI} \
+  --amount {AMOUNT_IN_TOKEN_UNITS} \
   --symbol {TOKEN_SYMBOL}
 ```
 
