@@ -124,7 +124,7 @@ describe("Donation Contract (viem test)", function () {
                 functionName: "allowedTokens",
                 args: [TOKEN_SYMBOL],
             })) as `0x${string}`;
-            expect(storedToken).to.equal(mockTokenAddress);
+            expect(storedToken.toLowerCase()).to.equal(mockTokenAddress.toLowerCase());
         });
 
         it("Should revert when adding a token with invalid address", async () => {
@@ -146,8 +146,10 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                // viem includes error data, can do an assertion on error.shortMessage, etc.
-                expect(error.shortMessage).to.contain("InvalidAddress");
+                    
+                // viem error surfaces details/message differently across versions
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InvalidAddress");
             }
             expect(errorCaught).to.be.true;
         });
@@ -164,7 +166,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("TokenAlreadyRegistered");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("TokenAlreadyRegistered");
             }
             expect(errorCaught).to.be.true;
         });
@@ -200,7 +204,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("TokenNotRegistered");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("TokenNotRegistered");
             }
             expect(errorCaught).to.be.true;
         });
@@ -237,7 +243,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("DonationAmountTooLow");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("DonationAmountTooLow");
             }
             expect(errorCaught).to.be.true;
         });
@@ -256,7 +264,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("InvalidAddress");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InvalidAddress");
             }
             expect(errorCaught).to.be.true;
         });
@@ -289,7 +299,7 @@ describe("Donation Contract (viem test)", function () {
             // The difference should be exactly 1 ETH. 
             // (The receiver doesn't pay gas for receiving ETH.)
             expect(receiverBalanceAfter - receiverBalanceBefore).to.equal(
-                Number(parseEther("1"))
+                parseEther("1")
             );
         });
 
@@ -313,7 +323,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("ValueDoesNotMatch");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("ValueDoesNotMatch");
             }
             expect(errorCaught).to.be.true;
         });
@@ -331,7 +343,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("TokenNotRegistered");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("TokenNotRegistered");
             }
             expect(errorCaught).to.be.true;
         });
@@ -363,7 +377,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHashDonate });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("InsufficientAllowance");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InsufficientAllowance");
             }
             expect(errorCaught).to.be.true;
         });
@@ -447,7 +463,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("InvalidAddress");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InvalidAddress");
             }
             expect(errorCaught).to.be.true;
         });
@@ -464,7 +482,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("InsufficientBalance");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InsufficientBalance");
             }
             expect(errorCaught).to.be.true;
         });
@@ -483,7 +503,7 @@ describe("Donation Contract (viem test)", function () {
             const contractBalAfter = await publicClient.getBalance({
                 address: donationAddress,
             });
-            expect(contractBalAfter - contractBalBefore).to.equal(Number(parseEther("0.5")));
+            expect(contractBalAfter - contractBalBefore).to.equal( parseEther("0.5") );
 
             // 2) Withdraw by owner
             const ownerBalBefore = await publicClient.getBalance({
@@ -505,8 +525,9 @@ describe("Donation Contract (viem test)", function () {
             });
             // Gas used
             const gasUsed = withdrawReceipt.gasUsed * (withdrawReceipt.effectiveGasPrice || 0n);
+            
             // The difference in the owner's balance, ignoring gas cost, is 0.5 ETH
-            expect(ownerBalAfter + gasUsed - ownerBalBefore).to.equal(Number(parseEther("0.5")));
+            expect(ownerBalAfter + gasUsed - ownerBalBefore).to.equal(parseEther("0.5"));
         });
 
         it("Should revert if withdrawToken target is zero address", async () => {
@@ -521,7 +542,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("InvalidAddress");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InvalidAddress");
             }
             expect(errorCaught).to.be.true;
         });
@@ -539,7 +562,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("TokenNotRegistered");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("TokenNotRegistered");
             }
             expect(errorCaught).to.be.true;
         });
@@ -564,7 +589,9 @@ describe("Donation Contract (viem test)", function () {
                 await publicClient.waitForTransactionReceipt({ hash: txHash });
             } catch (error: any) {
                 errorCaught = true;
-                expect(error.shortMessage).to.contain("InsufficientBalance");
+                    
+                const msg = (error?.details ?? error?.message ?? error?.shortMessage ?? "");
+                expect(msg).to.contain("InsufficientBalance");
             }
             expect(errorCaught).to.be.true;
         });
